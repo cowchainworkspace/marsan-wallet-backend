@@ -1,0 +1,25 @@
+{
+   "compilerOptions": {
+     "target": "es5",
+     "lib": ["esnext"],
+     "allowJs": true,
+     "skipLibCheck": true,
+     "esModuleInterop": true,
+     "allowSyntheticDefaultImports": true,
+     "strict": true,
+     "forceConsistentCasingInFileNames": true,
+     "noFallthroughCasesInSwitch": true,
+     "module": "CommonJS",
+     "moduleResolution": "node",
+     "resolveJsonModule": true,
+     "noEmit": true,
+     "outDir": "./dist",
+     "rootDir": "./",
+     "experimentalDecorators": true,
+     "strictPropertyInitialization": false,
+     "emitDecoratorMetadata": true
+   },
+   "include": ["**/*"],
+   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
+ }
+ 
