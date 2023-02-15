@@ -1,12 +1,13 @@
-import { UserModel } from "../models/User/User.model";
+import { IDbUser, UserModel } from "../models/User/User.model";
 import { ApiError } from "../exceptions/ApiError";
 import { UserDTO } from "../dtos/User.dto";
 import {
   compareStringWithHash,
   generateHashFromString,
 } from "../utils/hashUtil";
-import { CodeService } from "./Code.service";
 import { VerifyEmailModel } from "../models/VerifyEmail/VerifyEmail.model";
+import { TokenService } from "./Token.service";
+import { UserResponseBody } from "../models/User/User.query.models";
 
 class Service {
   public async register(email: string, password: string) {
@@ -31,8 +32,7 @@ class Service {
     verifiedEmail.user = changedUser._id;
     await verifiedEmail.save();
 
-    const viewUser = new UserDTO(changedUser);
-    return viewUser;
+    return await this._generateReturn(changedUser);
   }
 
   public async login(email: string, password: string) {
@@ -48,9 +48,22 @@ class Service {
       throw ApiError.BadRequest("Invalid email or password");
     }
 
-    const viewUser = new UserDTO(user);
+    return await this._generateReturn(user);
+  }
 
-    return viewUser;
+  public async logout(refreshToken: string) {
+    const token = await TokenService.removeToken(refreshToken);
+    return token;
+  }
+
+  public async refresh(userId: string) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw ApiError.UnauthorizedError();
+    }
+
+    return await this._generateReturn(user);
   }
 
   public async changePasswordById(id: string, password: string) {
@@ -70,11 +83,10 @@ class Service {
 
     const hashPassword = await generateHashFromString(password);
     user.password = hashPassword;
-    await user.save();
 
-    const viewUser = new UserDTO(user);
+    const updatedUser = await user.save();
 
-    return viewUser;
+    return await this._generateReturn(updatedUser);
   }
 
   public async getAllUsers(skip: number = 0, limit: number = 10) {
@@ -85,6 +97,15 @@ class Service {
     });
 
     return viewUsers;
+  }
+
+  private async _generateReturn(user: IDbUser): Promise<UserResponseBody> {
+    const viewUser = new UserDTO(user);
+    const tokens = TokenService.generateTokens(viewUser);
+
+    await TokenService.saveToken(viewUser.id, tokens.refreshToken);
+
+    return { ...tokens, user: viewUser };
   }
 }
 

@@ -10,7 +10,11 @@ export interface IAppConfig {
 const configSelector = (): IAppConfig => {
   const port = castToNumber(process.env.PORT, defaultPort);
 
-  return { port: port ?? defaultPort, bcryptSalt: 4, emailSendDelay: 60 };
+  return {
+    port: port ?? defaultPort,
+    bcryptSalt: 4,
+    emailSendDelay: 60,
+  };
 };
 
 export const appConfig = configSelector();

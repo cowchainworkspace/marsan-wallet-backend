@@ -13,7 +13,7 @@ const Code = new Schema(
   {
     email: { type: String, lowercase: true, required: true },
     code: { type: String, required: true },
-    createdAt: { type: Number, default: new Date().valueOf() },
+    createdAt: { type: Number, required: true },
   },
   {
     statics: {
@@ -24,7 +24,12 @@ const Code = new Schema(
         return await this.findByIdAndDelete(id).lean();
       },
       async createCode(email: string, code: string) {
-        return await this.create({ email: email.toLowerCase(), code });
+        const timestamp = new Date().valueOf();
+        return await this.create({
+          email: email.toLowerCase(),
+          code,
+          createdAt: timestamp,
+        });
       },
     },
   }

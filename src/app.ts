@@ -4,14 +4,17 @@ import { mainConfig } from "./config/mainConfig";
 import cors from "cors";
 import { errorMiddleware } from "./middlewares/Error.middleware";
 import { invalidPathMiddleware } from "./middlewares/InvalidPath.middleware";
+import cookieParser from "cookie-parser";
+
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ credentials: true }));
 
 app.use("/users", UserRouter);
 app.use("*", invalidPathMiddleware);
-app.use(errorMiddleware)
+app.use(errorMiddleware);
 
 export const startApp = () => {
   app.listen(mainConfig.app.port, async () => {

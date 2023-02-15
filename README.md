@@ -12,6 +12,9 @@ Steps to run this project:
 
     GOOGLE_EMAIL_LOGIN=''
     GOOGLE_EMAIL_PASSWORD=''
+
+    JWT_ACCESS_SECRET=''
+    JWT_REFRESH_SECRET=''
 ------------
 - Run `npm ci` command
 - Run `npm start` command

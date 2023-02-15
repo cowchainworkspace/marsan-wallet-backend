@@ -6,6 +6,14 @@ import {
   passwordValidateMiddleware,
   verificationMiddleware,
 } from "../middlewares/AccountCredentials.middleware";
+import { authMiddleware } from "../middlewares/Auth.middleware";
+import { refreshMiddleware } from "../middlewares/Refresh.middleware";
+import {
+  ChangePasswordBody,
+  ChangePasswordRequest,
+  UserResponse,
+} from "../models/User/User.query.models";
+import { ProtectedRequest } from "../types/TypedRequestAndResponse";
 
 export const UserRouter = Router();
 
@@ -22,11 +30,13 @@ UserRouter.post(
 UserRouter.post("/login", accountCredentialsMiddleware, UserController.login);
 
 UserRouter.post("/logout", UserController.logout);
+UserRouter.post("/token/refresh", refreshMiddleware, UserController.refresh);
 
 UserRouter.put(
-  "/change-password/:id",
+  "/change-password",
+  authMiddleware,
   passwordValidateMiddleware,
   UserController.changePassword
 );
 
-UserRouter.get("/", UserController.getAll);
+UserRouter.get("/", authMiddleware, UserController.getAll);

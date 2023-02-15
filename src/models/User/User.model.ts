@@ -1,5 +1,8 @@
 import { Model, model, Schema, Types } from "mongoose";
-import { IVerifyEmail, verifiedEmailModelName } from "../VerifyEmail/VerifyEmail.model";
+import {
+  IVerifyEmail,
+  verifiedEmailModelName,
+} from "../VerifyEmail/VerifyEmail.model";
 
 export interface IUser {
   email: string;
@@ -9,13 +12,20 @@ export interface IUser {
   isTwoFactored: boolean;
 }
 
+export interface IDbUser extends IUser {
+  _id: Types.ObjectId;
+}
+
 export const userModelName = "User";
-export const verifiedEmailField = 'verifiedEmail'
+export const verifiedEmailField = "verifiedEmail";
 const User = new Schema(
   {
     email: { type: String, lowercase: true, required: true },
     password: { type: String, required: true },
-    [verifiedEmailField]: { type: Schema.Types.ObjectId, ref: verifiedEmailModelName },
+    [verifiedEmailField]: {
+      type: Schema.Types.ObjectId,
+      ref: verifiedEmailModelName,
+    },
     isUserVerified: { type: Boolean, default: false },
     isTwoFactored: { type: Boolean, default: false },
   },

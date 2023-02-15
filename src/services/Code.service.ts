@@ -1,9 +1,7 @@
 import { mainConfig } from "../config/mainConfig";
-import { MINUTE, SECOND } from "../constants";
-import { UserDTO } from "../dtos/User.dto";
+import { SECOND } from "../constants";
 import { ApiError } from "../exceptions/ApiError";
 import { CodeModel } from "../models/Code/Code.model";
-import { UserModel } from "../models/User/User.model";
 import { generateCode } from "../utils/generateCode";
 import {
   compareStringWithHash,
@@ -31,10 +29,8 @@ class Service {
   public async sendCode(email: string) {
     const oldCode = await CodeModel.findByUserEmail(email);
     const currentTimestamp = new Date().valueOf();
-    console.log({oldCode})
     if (oldCode) {
       const timePassed = currentTimestamp - oldCode.createdAt;
-      console.log({timePassed})
       if (timePassed < mainConfig.app.emailSendDelay * SECOND) {
         throw ApiError.BadRequest(
           `The time between requests should be more than ${mainConfig.app.emailSendDelay} seconds.`
@@ -46,7 +42,7 @@ class Service {
 
     const hashCode = await generateHashFromString(generatedCode);
     await CodeModel.createCode(email, hashCode);
-    await EmailService.sendCode(email, generatedCode)
+    await EmailService.sendCode(email, generatedCode);
   }
 }
 
