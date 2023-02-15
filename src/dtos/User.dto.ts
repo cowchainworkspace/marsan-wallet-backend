@@ -11,8 +11,8 @@ export class UserDTO implements Omit<IUser, "password"> {
   constructor(model: IUser & { _id: Types.ObjectId }) {
     this.id = model._id.toString();
     this.email = model.email;
-    this.isEmailVerified = model.isEmailVerified;
     this.isUserVerified = model.isUserVerified;
     this.isTwoFactored = model.isTwoFactored;
+    this.isEmailVerified = !!model.verifiedEmail
   }
 }

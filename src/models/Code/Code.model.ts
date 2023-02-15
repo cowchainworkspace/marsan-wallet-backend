@@ -18,13 +18,13 @@ const Code = new Schema(
   {
     statics: {
       async findByUserEmail(email: string) {
-        return await this.findOne({ email }).lean();
+        return await this.findOne({ email: email.toLowerCase() }).lean();
       },
       async deleteById(id: string) {
         return await this.findByIdAndDelete(id).lean();
       },
       async createCode(email: string, code: string) {
-        return await this.create({ email: email, code });
+        return await this.create({ email: email.toLowerCase(), code });
       },
     },
   }

@@ -8,7 +8,6 @@ export const accountCredentialsValidator = object<AuthorithationBody>().shape({
 
 export const verificationValidator = object<AuthorithationBody>().shape({
   email: string().email().required(),
-  password: string().min(4).max(32).required(),
   code: string().length(5).required()
 });
 

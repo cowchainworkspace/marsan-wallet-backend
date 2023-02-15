@@ -1,30 +1,31 @@
 import { Model, model, Schema, Types } from "mongoose";
+import { IVerifyEmail, verifiedEmailModelName } from "../VerifyEmail/VerifyEmail.model";
 
 export interface IUser {
   email: string;
   password: string;
-  isEmailVerified: boolean;
+  verifiedEmail?: Types.ObjectId;
   isUserVerified: boolean;
   isTwoFactored: boolean;
 }
 
 export const userModelName = "User";
-
+export const verifiedEmailField = 'verifiedEmail'
 const User = new Schema(
   {
     email: { type: String, lowercase: true, required: true },
     password: { type: String, required: true },
-    isEmailVerified: { type: Boolean, default: false },
+    [verifiedEmailField]: { type: Schema.Types.ObjectId, ref: verifiedEmailModelName },
     isUserVerified: { type: Boolean, default: false },
     isTwoFactored: { type: Boolean, default: false },
   },
   {
     statics: {
       async createByEmailAndPassword(email: string, password: string) {
-        return await this.create({ email, password, isEmailVerified: true });
+        return await this.create({ email: email.toLowerCase(), password });
       },
       async findByEmail(email: string) {
-        return await this.findOne({ email: email }).lean();
+        return await this.findOne({ email: email.toLowerCase() }).lean();
       },
       async changePasswordById(id: string, password) {
         return await this.findByIdAndUpdate(

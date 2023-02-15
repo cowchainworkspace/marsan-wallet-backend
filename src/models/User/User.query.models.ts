@@ -9,15 +9,17 @@ export interface AuthorithationBody {
   password: string;
 }
 
-export interface VerificationBody extends AuthorithationBody {
+
+export type CheckEmailBody = Omit<AuthorithationBody, "password">;
+export type ChangePasswordBody = Omit<AuthorithationBody, "email">;
+
+export interface EmailVerificationBody extends CheckEmailBody {
   code: string;
 }
 
-export type RegistrationBody = Omit<AuthorithationBody, "password">;
-export type ChangePasswordBody = Omit<AuthorithationBody, "email">;
-
-export type RegisterRequest = RequestWithBody<RegistrationBody>;
-export type VerifyRequest = RequestWithBody<VerificationBody>;
+export type RegisterRequest = RequestWithBody<AuthorithationBody>;
+export type CheckEmailRequest = RequestWithBody<CheckEmailBody>;
+export type EmailVerifyRequest = RequestWithBody<EmailVerificationBody>;
 export type LoginRequest = RequestWithBody<AuthorithationBody>;
 
 export type ChangePasswordRequest = RequestWithBodyAndParams<

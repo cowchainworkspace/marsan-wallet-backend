@@ -27,8 +27,8 @@ export const accountCredentialsMiddleware = validateModel(
   accountCredentialsValidator
 );
 
-export const passwordValidateMiddleware = validateModel(passwordValidator);
-
 export const emailValidateMiddleware = validateModel(emailValidator);
 
 export const verificationMiddleware = validateModel(verificationValidator);
+
+export const passwordValidateMiddleware = validateModel(passwordValidator);

@@ -1,15 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import {
   ChangePasswordRequest,
+  CheckEmailRequest,
   GetUsersRequest,
   LoginRequest,
   RegisterRequest,
-  VerifyRequest,
+  EmailVerifyRequest,
 } from "../models/User/User.query.models";
 import { UserService } from "../services/User.service";
 import { ApiError } from "../exceptions/ApiError";
 import { castToNumber } from "../utils/castToNumber";
 import { CodeService } from "../services/Code.service";
+import { VerifyEmailService } from "../services/VerifyEmail.service";
 class Controller {
   public async register(
     req: RegisterRequest,
@@ -17,19 +19,37 @@ class Controller {
     next: NextFunction
   ) {
     try {
-      const { email } = req.body;
-      await CodeService.sendCode(email);
-      res.json({ message: `Code sended to the ${email} ` });
+      const { email, password } = req.body;
+      const user = await UserService.register(email, password)
+      res.json({ message: `Successfully registered`, user });
     } catch (error) {
       next(error);
     }
   }
 
-  public async verify(req: VerifyRequest, res: Response, next: NextFunction) {
+  public async checkEmail(
+    req: CheckEmailRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      const { email, password, code } = req.body;
-      const user = await UserService.register(email, password, code);
-      res.json(user);
+      const { email } = req.body;
+      await CodeService.sendCode(email);
+      res.json({ message: `Code sended to the ${email}` });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async verify(
+    req: EmailVerifyRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { email, code } = req.body;
+      const verified = await VerifyEmailService.verify(email, code);
+      res.json({ message: "Successfully verified", data: verified });
     } catch (error) {
       next(error);
     }

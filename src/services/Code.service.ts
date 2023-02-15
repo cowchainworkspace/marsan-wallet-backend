@@ -9,6 +9,7 @@ import {
   compareStringWithHash,
   generateHashFromString,
 } from "../utils/hashUtil";
+import { EmailService } from "./Email.service";
 
 class Service {
   public async verifyCode(email: string, code: string) {
@@ -30,8 +31,10 @@ class Service {
   public async sendCode(email: string) {
     const oldCode = await CodeModel.findByUserEmail(email);
     const currentTimestamp = new Date().valueOf();
+    console.log({oldCode})
     if (oldCode) {
       const timePassed = currentTimestamp - oldCode.createdAt;
+      console.log({timePassed})
       if (timePassed < mainConfig.app.emailSendDelay * SECOND) {
         throw ApiError.BadRequest(
           `The time between requests should be more than ${mainConfig.app.emailSendDelay} seconds.`
@@ -42,9 +45,8 @@ class Service {
     const generatedCode = generateCode();
 
     const hashCode = await generateHashFromString(generatedCode);
-    const dbCode = await CodeModel.createCode(email, hashCode);
-    console.log({generatedCode})
-    //... send code logic
+    await CodeModel.createCode(email, hashCode);
+    await EmailService.sendCode(email, generatedCode)
   }
 }
 

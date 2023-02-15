@@ -6,21 +6,32 @@ import {
   generateHashFromString,
 } from "../utils/hashUtil";
 import { CodeService } from "./Code.service";
+import { VerifyEmailModel } from "../models/VerifyEmail/VerifyEmail.model";
 
 class Service {
-  public async register(email: string, password: string, code: string) {
+  public async register(email: string, password: string) {
     const isExists = await UserModel.findByEmail(email);
 
     if (isExists) {
       throw ApiError.BadRequest("User with this email is already exists");
     }
 
-    await CodeService.verifyCode(email, code);
+    const verifiedEmail = await VerifyEmailModel.findByEmail(email);
+
+    if (!verifiedEmail) {
+      throw ApiError.BadRequest("Email is not verified");
+    }
 
     const hashPassword = await generateHashFromString(password);
     const user = await UserModel.createByEmailAndPassword(email, hashPassword);
-    const viewUser = new UserDTO(user);
 
+    user.verifiedEmail = verifiedEmail._id;
+    const changedUser = await user.save();
+
+    verifiedEmail.user = changedUser._id;
+    await verifiedEmail.save();
+
+    const viewUser = new UserDTO(changedUser);
     return viewUser;
   }
 
