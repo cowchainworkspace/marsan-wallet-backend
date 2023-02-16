@@ -4,6 +4,7 @@ import { cookieConfig, ICookieConfig } from "./cookieConfig";
 import { databaseConfig, IDatabaseConfig } from "./dbConfig";
 import { emailConfig, IEmailConfig } from "./emailConfig";
 import { IJwtConfig, jwtConfig } from "./jwtConfig";
+import { IKmsScriptsConfig, kmsScriptsConfig } from "./kmsConfig";
 
 config();
 
@@ -13,6 +14,7 @@ interface MainConfig {
   email: IEmailConfig;
   jwt: IJwtConfig;
   cookie: ICookieConfig;
+  kmsConfig: IKmsScriptsConfig
 }
 
 const configMainnet: MainConfig = {
@@ -21,6 +23,7 @@ const configMainnet: MainConfig = {
   email: emailConfig,
   jwt: jwtConfig,
   cookie: cookieConfig,
+  kmsConfig: kmsScriptsConfig
 };
 
 export const mainConfig: MainConfig = configMainnet;
