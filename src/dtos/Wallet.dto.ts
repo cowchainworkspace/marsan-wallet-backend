@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 import { IWalletDb } from "../models/Wallet/Wallet.model";
-import { NetworksList } from "../types/enums/NetworksList";
 
 type Wallet = Omit<IWalletDb, "user">;
 

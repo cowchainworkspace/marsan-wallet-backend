@@ -1,14 +1,8 @@
-import { UserDTO } from "../../dtos/User.dto";
 import { NetworksList } from "../../types/enums/NetworksList";
 import {
-  ProtectedRequestWithBody,
-  RequestWithBody,
   RequestWithBodyAndParams,
   RequestWithBodyAndQuery,
   RequestWithParams,
-  RequestWithQuery,
-  ResponseWithBody,
-  TextMessage,
 } from "../../types/TypedRequestAndResponse";
 
 interface ChainsBody {

@@ -8,12 +8,6 @@ import {
 } from "../middlewares/AccountCredentials.middleware";
 import { authMiddleware } from "../middlewares/Auth.middleware";
 import { refreshMiddleware } from "../middlewares/Refresh.middleware";
-import {
-  ChangePasswordBody,
-  ChangePasswordRequest,
-  UserResponse,
-} from "../models/User/User.query.models";
-import { ProtectedRequest } from "../types/TypedRequestAndResponse";
 
 export const UserRouter = Router();
 

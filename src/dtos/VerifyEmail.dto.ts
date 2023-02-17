@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 import { IVerifyEmail } from "../models/VerifyEmail/VerifyEmail.model";
-import { UserDTO } from "./User.dto";
 
 type VerifiedDTO = Omit<IVerifyEmail, "user">;
 

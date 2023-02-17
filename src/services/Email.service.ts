@@ -1,10 +1,7 @@
 import { createTransport, Transporter } from "nodemailer";
 import { MailOptions } from "nodemailer/lib/sendmail-transport";
 import { mainConfig } from "../config/mainConfig";
-import { VerifyEmailDTO } from "../dtos/VerifyEmail.dto";
 import { getVerificationCodeHTML } from "../html/VerificationCodeMail";
-import { VerifyEmailModel } from "../models/VerifyEmail/VerifyEmail.model";
-import { CodeService } from "./Code.service";
 
 class Service {
   private _emailCfg = mainConfig.email;

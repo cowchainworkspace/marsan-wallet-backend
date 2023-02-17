@@ -1,7 +1,7 @@
 import { model, Schema, Types } from "mongoose";
 import { NetworksList } from "../../types/enums/NetworksList";
 import { IGeneratedManagedWallet } from "../../types/KmsWalletTypes";
-import { IDbUser, userModelName } from "../User/User.model";
+import { userModelName } from "../User/User.model";
 
 export const userField = "user";
 export const walletModelName = "Wallet";

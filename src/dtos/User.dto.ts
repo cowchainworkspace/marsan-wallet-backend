@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { IDbUser, IUser } from "../models/User/User.model";
 export class UserDTO implements Omit<IUser, "password"> {
   id: string;
@@ -12,6 +11,6 @@ export class UserDTO implements Omit<IUser, "password"> {
     this.email = model.email;
     this.isUserVerified = model.isUserVerified;
     this.isTwoFactored = model.isTwoFactored;
-    this.isEmailVerified = !!model.verifiedEmail
+    this.isEmailVerified = !!model.verifiedEmail;
   }
 }

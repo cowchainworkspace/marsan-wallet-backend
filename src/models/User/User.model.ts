@@ -1,8 +1,5 @@
-import { Model, model, Schema, Types } from "mongoose";
-import {
-  IVerifyEmail,
-  verifiedEmailModelName,
-} from "../VerifyEmail/VerifyEmail.model";
+import { model, Schema, Types } from "mongoose";
+import { verifiedEmailModelName } from "../VerifyEmail/VerifyEmail.model";
 
 export interface IUser {
   email: string;
@@ -45,7 +42,10 @@ const User = new Schema(
         ).lean();
       },
       async findUsers(skip: number, limit: number) {
-        return await this.find().skip(skip).limit(limit).lean();
+        return await this.find()
+          .skip(skip)
+          .limit(limit)
+          .lean();
       },
     },
   }

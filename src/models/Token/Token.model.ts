@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { UserDTO } from "../../dtos/User.dto";
-import { IUser, userModelName } from "../User/User.model";
+import { userModelName } from "../User/User.model";
 
 export interface IVerifyEmail {
   refreshToken: string;
@@ -37,12 +37,12 @@ const SchemaInstance = new Schema(
   }
 );
 
-SchemaInstance.pre("find", function (next) {
+SchemaInstance.pre("find", function(next) {
   this.populate({ path: userField, model: userModelName });
   next();
 });
 
-SchemaInstance.pre("findOne", function (next) {
+SchemaInstance.pre("findOne", function(next) {
   this.populate({ path: userField, model: userModelName });
   next();
 });

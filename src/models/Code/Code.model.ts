@@ -1,5 +1,4 @@
 import { model, Schema } from "mongoose";
-import { userModelName } from "../User/User.model";
 
 export interface ICode {
   email: string;

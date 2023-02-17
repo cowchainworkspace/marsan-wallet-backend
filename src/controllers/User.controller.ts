@@ -14,7 +14,6 @@ import { ApiError } from "../exceptions/ApiError";
 import { castToNumber } from "../utils/castToNumber";
 import { CodeService } from "../services/Code.service";
 import { VerifyEmailService } from "../services/VerifyEmail.service";
-import { mainConfig } from "../config/mainConfig";
 import {
   MessageResponse,
   ProtectedRequest,

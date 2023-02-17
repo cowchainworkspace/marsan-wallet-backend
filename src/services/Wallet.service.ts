@@ -1,13 +1,5 @@
-import { IDbUser, UserModel } from "../models/User/User.model";
+import { UserModel } from "../models/User/User.model";
 import { ApiError } from "../exceptions/ApiError";
-import { UserDTO } from "../dtos/User.dto";
-import {
-  compareStringWithHash,
-  generateHashFromString,
-} from "../utils/hashUtil";
-import { VerifyEmailModel } from "../models/VerifyEmail/VerifyEmail.model";
-import { TokenService } from "./Token.service";
-import { UserResponseBody } from "../models/User/User.query.models";
 import { KeyManagementService } from "./KeyManagement.service";
 import { NetworksList } from "../types/enums/NetworksList";
 import { WalletModel } from "../models/Wallet/Wallet.model";

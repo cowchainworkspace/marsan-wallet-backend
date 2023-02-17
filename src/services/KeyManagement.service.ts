@@ -1,8 +1,6 @@
 import cp from "child_process";
-import { Types } from "mongoose";
 import { mainConfig } from "../config/mainConfig";
 import { MINUTE, SECOND } from "../constants";
-import { WalletModel } from "../models/Wallet/Wallet.model";
 import { NetworksList } from "../types/enums/NetworksList";
 import {
   IAddress,
