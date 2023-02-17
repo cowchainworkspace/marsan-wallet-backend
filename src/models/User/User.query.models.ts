@@ -1,4 +1,5 @@
 import { UserDTO } from "../../dtos/User.dto";
+import { WalletDTO } from "../../dtos/Wallet.dto";
 import {
   ProtectedRequestWithBody,
   RequestWithBody,
@@ -36,6 +37,7 @@ export type UserResponseBody = {
   accessToken: string;
   refreshToken: string;
   user: UserDTO;
+  wallets: WalletDTO[]
 };
 
 export type UserResponseWithMessage = ResponseWithBody<

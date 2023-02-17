@@ -1,6 +1,8 @@
 import cp from "child_process";
+import { Types } from "mongoose";
 import { mainConfig } from "../config/mainConfig";
 import { MINUTE, SECOND } from "../constants";
+import { WalletModel } from "../models/Wallet/Wallet.model";
 import { NetworksList } from "../types/enums/NetworksList";
 import {
   IAddress,
@@ -10,6 +12,9 @@ import {
   ManagedWallet,
 } from "../types/KmsWalletTypes";
 
+const cb = (data: any) => {
+  console.log(data.toString());
+};
 class Service {
   private _processes: Map<
     string,
@@ -35,17 +40,21 @@ class Service {
 
     const controller = new AbortController();
 
-    const spawnOptions = {
+    const spawnOptions: cp.SpawnOptionsWithoutStdio = {
       shell: true,
       signal: controller.signal,
     };
 
     const spawnProcess = cp.spawn(script, spawnOptions);
-
     this._addProcessWithName(
       this._scripts.startDaemon,
       spawnProcess,
-      controller,
+      controller
+    );
+
+    this._addListenersToProcess(
+      this._scripts.startDaemon,
+      spawnProcess,
       showMessages
     );
   }
@@ -53,13 +62,22 @@ class Service {
   public async stopListenTransactions() {
     //Probably check is admin
     //..
-    this._stopProcessWithName(this._scripts.startDaemon);
+    try {
+      return this._stopProcessWithName(this._scripts.startDaemon);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   public async generateManagedWallet(chain: NetworksList) {
     const execResult: IGeneratedManagedWallet | null = await this._execRunner(
       `${this._scripts.generateManagedWallet} ${chain}`
     );
+
+    if (!execResult) {
+      throw new Error("Failed to generate wallet");
+    }
+
     return execResult;
   }
 
@@ -90,46 +108,71 @@ class Service {
     const execResult: IAddress | null = await this._execRunner(
       `${this._scripts.getAddress} ${signatureId}`
     );
+    if (!execResult) {
+      throw new Error("Failed to get wallet address");
+    }
     return execResult;
   }
 
   private _stopProcessWithName(name: string) {
-    const pair = this._processes.get(name);
-    if (pair) {
-      this._processes.delete(name);
-      pair.controller.abort();
+    try {
+      const pair = this._processes.get(name);
+      if (pair) {
+        this._removeListenersFromProcess(name, pair.process);
+        this._processes.delete(name);
+        pair.controller.abort();
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   private _addProcessWithName(
     name: string,
     process: cp.ChildProcess,
-    controller: AbortController,
-    showMessages: boolean = true
+    controller: AbortController
   ) {
     this._processes.set(name, {
       process,
       controller,
     });
+  }
 
-    process.stdout?.on("data", (chunk) => {
-      showMessages && console.log(chunk.toString());
-    });
+  private _addListenersToProcess(
+    processName: string,
+    process: cp.ChildProcess,
+    showMessages: boolean = true
+  ) {
+    process.stdout?.on("data", cb);
 
-    process.stderr?.on("data", (err) => {
-      showMessages && console.log({ err: err.toString() });
-      this._stopProcessWithName(name);
-    });
+    process.stderr?.on("data", cb);
+
+    process.on("error", cb);
+  }
+
+  private _removeListenersFromProcess(
+    processName: string,
+    process: cp.ChildProcess
+  ) {
+    process.stdout?.off("data", cb);
+
+    process.stderr?.off("data", cb);
   }
 
   private _execRunner<T>(script: string): Promise<T | null> {
     return new Promise((res, rej) => {
       cp.exec(script, (error, outString) => {
-        if (error) {
-          return rej(error);
+        try {
+          if (error) {
+            return rej(error);
+          }
+
+          const body = JSON.parse(outString);
+
+          return res(body);
+        } catch (error) {
+          rej(error);
         }
-        const body = JSON.parse(outString);
-        return res(body);
       });
     });
   }

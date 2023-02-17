@@ -8,6 +8,11 @@ import {
 import { VerifyEmailModel } from "../models/VerifyEmail/VerifyEmail.model";
 import { TokenService } from "./Token.service";
 import { UserResponseBody } from "../models/User/User.query.models";
+import { KeyManagementService } from "./KeyManagement.service";
+import { NetworksList } from "../types/enums/NetworksList";
+import { WalletService } from "./Wallet.service";
+import { WalletModel } from "../models/Wallet/Wallet.model";
+import { WalletDTO } from "../dtos/Wallet.dto";
 
 class Service {
   public async register(email: string, password: string) {
@@ -31,6 +36,8 @@ class Service {
 
     verifiedEmail.user = changedUser._id;
     await verifiedEmail.save();
+
+    await WalletService.createEthWalletForUser(changedUser._id.toString());
 
     return await this._generateReturn(changedUser);
   }
@@ -103,9 +110,12 @@ class Service {
     const viewUser = new UserDTO(user);
     const tokens = TokenService.generateTokens(viewUser);
 
+    const wallets = await WalletModel.findByUser(user._id.toString());
+    const viewWallets = wallets.map((wallet) => new WalletDTO(wallet));
+
     await TokenService.saveToken(viewUser.id, tokens.refreshToken);
 
-    return { ...tokens, user: viewUser };
+    return { ...tokens, user: viewUser, wallets: viewWallets };
   }
 }
 

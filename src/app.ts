@@ -5,6 +5,7 @@ import cors from "cors";
 import { errorMiddleware } from "./middlewares/Error.middleware";
 import { invalidPathMiddleware } from "./middlewares/InvalidPath.middleware";
 import cookieParser from "cookie-parser";
+import { KeyManagementRouter } from "./api/KeyManagement.router";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cookieParser());
 app.use(cors({ credentials: true }));
 
 app.use("/users", UserRouter);
+app.use("/kms", KeyManagementRouter);
 app.use("*", invalidPathMiddleware);
 app.use(errorMiddleware);
 
