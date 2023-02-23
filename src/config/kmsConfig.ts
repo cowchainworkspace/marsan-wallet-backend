@@ -16,7 +16,7 @@ const configSelector = (): IKmsScriptsConfig => {
   return {
     scripts: {
       startDaemon: kmsScriptCreator(
-        `daemon --external-url=http://192.168.57.63`
+        `daemon`
       ),
       generateManagedWallet: kmsScriptCreator(`generatemanagedwallet`),
       exportWallets: kmsScriptCreator("export"),

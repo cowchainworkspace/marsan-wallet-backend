@@ -11,6 +11,8 @@ import { UserResponseBody } from "../models/User/User.query.models";
 import { WalletService } from "./Wallet.service";
 import { WalletModel } from "../models/Wallet/Wallet.model";
 import { WalletDTO } from "../dtos/Wallet.dto";
+import { NetworksList } from "../types/enums/NetworksList";
+import { TatumEthService } from "./Tatum/Blockchain/Eth.service";
 
 class Service {
   public async register(email: string, password: string) {
@@ -36,6 +38,7 @@ class Service {
     await verifiedEmail.save();
 
     await WalletService.createEthWalletForUser(changedUser._id.toString());
+    await WalletService.createBtcWalletForUser(changedUser._id.toString());
 
     return await this._generateReturn(changedUser);
   }
@@ -109,7 +112,17 @@ class Service {
     const tokens = TokenService.generateTokens(viewUser);
 
     const wallets = await WalletModel.findByUser(user._id.toString());
-    const viewWallets = wallets.map((wallet) => new WalletDTO(wallet));
+    const viewWalletsPromise = wallets.map(async (wallet) => {
+      if (wallet.network === NetworksList.ETH) {
+        const balance = await TatumEthService.getBalance(wallet.address);
+        wallet.nativeBalance = balance.balance;
+        const changedWallet = await wallet.save();
+        return new WalletDTO(changedWallet);
+      }
+      return new WalletDTO(wallet);
+    });
+
+    const viewWallets = await Promise.all(viewWalletsPromise);
 
     await TokenService.saveToken(viewUser.id, tokens.refreshToken);
 

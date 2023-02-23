@@ -7,3 +7,5 @@ export const DAY = HOUR * 24;
 
 export const accessLifeMultiplier = 12;
 export const refreshLifeMultiplier = 30;
+
+export const zeroBalance = "0";

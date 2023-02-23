@@ -1,20 +1,21 @@
-import { Types } from "mongoose";
 import { IWalletDb } from "../models/Wallet/Wallet.model";
 
-type Wallet = Omit<IWalletDb, "user">;
-
-export class WalletDTO implements Omit<Wallet, "_id"> {
+export class WalletDTO {
   id: string;
   signatureId: string;
-  xpub: string;
   network: string;
   address: string;
+  nativeBalance: string
+  isMainnet: boolean;
+  index: number;
 
-  constructor(model: IWalletDb & { _id: Types.ObjectId }) {
+  constructor(model: IWalletDb) {
     this.id = model._id.toString();
     this.signatureId = model.signatureId;
-    this.xpub = model.xpub;
     this.network = model.network;
     this.address = model.address;
+    this.isMainnet = model.isMainnet;
+    this.index = model.walletIndex;
+    this.nativeBalance = model?.nativeBalance ?? '0'
   }
 }

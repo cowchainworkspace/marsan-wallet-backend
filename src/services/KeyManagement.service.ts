@@ -1,6 +1,7 @@
 import cp from "child_process";
 import { mainConfig } from "../config/mainConfig";
 import { MINUTE, SECOND } from "../constants";
+import { EnvironmentList } from "../types/enums/EnvironmentList";
 import { NetworksList } from "../types/enums/NetworksList";
 import {
   IAddress,
@@ -18,8 +19,10 @@ class Service {
     string,
     { process: cp.ChildProcess; controller: AbortController }
   > = new Map();
+
   private _config = mainConfig.kmsConfig;
   private _scripts = mainConfig.kmsConfig.scripts;
+  private _environmentOption = mainConfig.isMainnet ? "" : "--testnet";
 
   public async startListenTransactions(
     chains: NetworksList[],
@@ -34,7 +37,7 @@ class Service {
       !!period && period < MINUTE / SECOND ? period : this._config.daemonPeriod
     }`;
 
-    const script = `${this._scripts.startDaemon} ${chainsOption} ${periodOption}`;
+    const script = `${this._scripts.startDaemon} ${chainsOption} ${periodOption} ${this._environmentOption}`;
 
     const controller = new AbortController();
 
@@ -69,47 +72,49 @@ class Service {
 
   public async generateManagedWallet(chain: NetworksList) {
     const execResult: IGeneratedManagedWallet | null = await this._execRunner(
-      `${this._scripts.generateManagedWallet} ${chain}`
+      `${this._scripts.generateManagedWallet} ${chain} ${this._environmentOption}`
     );
 
     if (!execResult) {
       throw new Error("Failed to generate wallet");
     }
 
-    return execResult;
+    return { ...execResult, isMainnet: mainConfig.isMainnet };
   }
 
   public async exportAllWallets() {
     //Probably check is admin
     //..
     const execResult: IExportedWallets | null = await this._execRunner(
-      this._scripts.exportWallets
+      `${this._scripts.exportWallets} ${this._environmentOption}`
     );
     return execResult;
   }
 
   public async getManagedWallet(signatureId: string) {
     const execResult: ManagedWallet | null = await this._execRunner(
-      `${this._scripts.getManagedWallet} ${signatureId}`
+      `${this._scripts.getManagedWallet} ${signatureId} ${this._environmentOption}`
     );
     return execResult;
   }
 
   public async getPrivateKey(signatureId: string) {
     const execResult: IPrivateKey | null = await this._execRunner(
-      `${this._scripts.getPrivateKey} ${signatureId}`
+      `${this._scripts.getPrivateKey} ${signatureId} ${this._environmentOption}`
     );
     return execResult;
   }
 
   public async getAddress(signatureId: string) {
+    const derivationIdx = Math.floor(Math.random() * 1000 + 1);
+
     const execResult: IAddress | null = await this._execRunner(
-      `${this._scripts.getAddress} ${signatureId}`
+      `${this._scripts.getAddress} ${signatureId} ${derivationIdx} ${this._environmentOption}`
     );
     if (!execResult) {
       throw new Error("Failed to get wallet address");
     }
-    return execResult;
+    return { ...execResult, derivationIdx };
   }
 
   private _stopProcessWithName(name: string) {
@@ -161,9 +166,12 @@ class Service {
     return new Promise((res, rej) => {
       cp.exec(script, (error, outString) => {
         try {
+          console.log({ script });
           if (error) {
             return rej(error);
           }
+
+          console.log({ outString });
 
           const body = JSON.parse(outString);
 

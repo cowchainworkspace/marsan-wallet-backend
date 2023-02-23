@@ -1,7 +1,13 @@
 import { NetworksList } from "./enums/NetworksList";
 
-export interface IGeneratedManagedWallet {
+export interface ISignatureId{
   signatureId: string;
+}
+
+export interface IAddress {
+  address: string;
+}
+export interface IGeneratedManagedWallet extends ISignatureId {
   xpub: string;
 }
 
@@ -11,9 +17,7 @@ export type ManagedWallet = Omit<IGeneratedManagedWallet, "signatureId"> & {
   testnet: boolean;
 };
 
-export interface IAddress {
-  address: string;
-}
+export type IGeneratedManagetPrivateKey = ISignatureId & IAddress
 
 export interface IPrivateKey {
   privateKey: string;

@@ -6,6 +6,7 @@ export type RequestWithBody<T> = Request<{}, {}, T>;
 export type RequestWithQuery<T> = Request<{}, {}, {}, T>;
 export type RequestWithParams<T> = Request<T>;
 export type RequestWithBodyAndParams<T, K> = Request<K, {}, T>;
+export type RequestWithParamsAndQuery<T, K> = Request<T, {}, {}, K>;
 export type RequestWithBodyAndQuery<T, K> = Request<{}, {}, T, K>;
 
 export type ProtectedRequest = Request & { user?: JwtPayload & UserDTO };

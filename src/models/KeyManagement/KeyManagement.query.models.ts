@@ -16,6 +16,10 @@ interface Signature {
   signatureId: string;
 }
 
+interface UserId {
+  userId: string;
+}
+
 export type StartListenRequestWithQueryAndBody = RequestWithBodyAndQuery<
   ChainsBody,
   {
@@ -25,6 +29,9 @@ export type StartListenRequestWithQueryAndBody = RequestWithBodyAndQuery<
 >;
 
 export type GetManagedWalletRequest = RequestWithParams<Signature>;
+export type GetManagedWalletAddressRequest = RequestWithParams<
+  Signature & UserId
+>;
 export type CreateManagedWalletRequest = RequestWithBodyAndParams<
   ChainBody,
   { userId: string }

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { mainConfig } from "../config/mainConfig";
 import {
   CreateManagedWalletRequest,
+  GetManagedWalletAddressRequest,
   GetManagedWalletRequest,
   StartListenRequestWithQueryAndBody,
 } from "../models/KeyManagement/KeyManagement.query.models";
@@ -62,7 +63,7 @@ class Controller {
   }
 
   public async getWalletAddress(
-    req: GetManagedWalletRequest,
+    req: GetManagedWalletAddressRequest,
     res: Response,
     next: NextFunction
   ) {

@@ -3,13 +3,13 @@ import { KeyManagementController } from "../controllers/KeyManagement.controller
 
 export const KeyManagementRouter = Router();
 
-// KeyManagementRouter.post("/start", KeyManagementController.start);
-// KeyManagementRouter.post("/stop", KeyManagementController.stop);
+KeyManagementRouter.post("/start", KeyManagementController.start);
+KeyManagementRouter.post("/stop", KeyManagementController.stop);
 
-// KeyManagementRouter.post(
-//   "/wallets",
-//   KeyManagementController.createManagedWallet
-// );
+KeyManagementRouter.post(
+  "/wallets/:userId",
+  KeyManagementController.createManagedWallet
+);
 
 KeyManagementRouter.get(
   "/wallets/:signatureId",
@@ -17,8 +17,8 @@ KeyManagementRouter.get(
 );
 
 KeyManagementRouter.get(
-  "/wallets/address/:signatureId",
+  "/wallets/address/:signatureId/:userId",
   KeyManagementController.getWalletAddress
 );
 
-// KeyManagementRouter.get('/wallets')
+KeyManagementRouter.get("/wallets");
