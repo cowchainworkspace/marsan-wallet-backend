@@ -40,6 +40,7 @@ class Service extends TatumApiInstance implements AbstractTatumBlockchainAdapter
       amount: amount,
       currency: NetworksList.ETH,
       signatureId: wallet.signatureId,
+      index: wallet.walletIndex
     };
 
     const path = `${this._path}/transaction`;
