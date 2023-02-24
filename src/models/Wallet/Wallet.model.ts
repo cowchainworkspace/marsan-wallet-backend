@@ -21,7 +21,7 @@ const SchemaInstance = new Schema(
     xpub: { type: String, required: true },
     network: { type: String, required: true },
     address: { type: String, required: true },
-    nativeBalance: { type: String, default: '0' },
+    nativeBalance: { type: String, default: "0" },
     isMainnet: { type: Boolean, required: true },
     walletIndex: { type: Number, required: true },
     [userField]: { type: Schema.Types.ObjectId, ref: `${userModelName}s` },
@@ -56,6 +56,9 @@ const SchemaInstance = new Schema(
       },
       async findByUser(userId: string) {
         return await this.find({ user: userId });
+      },
+      async findByUserAndAddress(userId: string, address: string) {
+        return await this.findOne({ user: userId, address: address.toLowerCase() });
       },
       async updateBalanceByAddress(address: string, balance: string) {
         return await this.findOneAndUpdate(

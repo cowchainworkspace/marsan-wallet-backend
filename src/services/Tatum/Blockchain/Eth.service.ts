@@ -1,12 +1,14 @@
 import { CreateAxiosDefaults } from "axios";
 import { mainConfig } from "../../../config/mainConfig";
 import { TatumApiInstance } from "../../../core/TatumApiInstance";
+import { ApiError } from "../../../exceptions/ApiError";
 import { GetAccountBalanceResponse } from "../../../models/Tatum/Tatum.query.models";
 import { WalletModel } from "../../../models/Wallet/Wallet.model";
+import { AbstractTatumBlockchainAdapter } from "../../../types/AbstractTatumBlockchainAdapter";
 import { NetworksList } from "../../../types/enums/NetworksList";
 import { SendTatumTransactionResponse } from "../../../types/SendTatumTransactionResponse";
 
-class Service extends TatumApiInstance {
+class Service extends TatumApiInstance implements AbstractTatumBlockchainAdapter {
   private _path = "/v3/ethereum";
 
   constructor() {
@@ -18,18 +20,26 @@ class Service extends TatumApiInstance {
     super(mainConfig.isMainnet ? undefined : config);
   }
 
-  public async sendEth(to: string, amount: string, signatureId: string) {
-    const wallet = await WalletModel.findBySignature(signatureId);
+  public async sendEth(from: string, to: string, amount: string, id: string) {
+    const wallet = await WalletModel.findByUserAndAddress(id, from);
 
     if (!wallet) {
-      throw new Error("Invalid signatureId");
+      throw ApiError.BadRequest("Wallet for user not exist");
+    }
+
+    if (!amount || isNaN(+amount) || +wallet.nativeBalance < +amount) {
+      throw ApiError.BadRequest("Invalid amount");
+    }
+
+    if (wallet.network !== NetworksList.ETH) {
+      throw ApiError.BadRequest("Invalid wallet type");
     }
 
     const body = {
       to: to,
       amount: amount,
       currency: NetworksList.ETH,
-      signatureId: signatureId,
+      signatureId: wallet.signatureId,
     };
 
     const path = `${this._path}/transaction`;
@@ -39,12 +49,12 @@ class Service extends TatumApiInstance {
     return result;
   }
 
-  public async getBalance(address: string) {
+  async getBalance(address: string) {
     const path = `${this._path}/account/balance/${address}`;
 
     const result: GetAccountBalanceResponse = await this.get(path);
 
-    return result;
+    return result.balance;
   }
 }
 

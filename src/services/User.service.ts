@@ -13,6 +13,7 @@ import { WalletModel } from "../models/Wallet/Wallet.model";
 import { WalletDTO } from "../dtos/Wallet.dto";
 import { NetworksList } from "../types/enums/NetworksList";
 import { TatumEthService } from "./Tatum/Blockchain/Eth.service";
+import { TatumBlockchainAdapterService } from "./Tatum/Blockchain/Adapter.service";
 
 class Service {
   public async register(email: string, password: string) {
@@ -113,13 +114,13 @@ class Service {
 
     const wallets = await WalletModel.findByUser(user._id.toString());
     const viewWalletsPromise = wallets.map(async (wallet) => {
-      if (wallet.network === NetworksList.ETH) {
-        const balance = await TatumEthService.getBalance(wallet.address);
-        wallet.nativeBalance = balance.balance;
-        const changedWallet = await wallet.save();
-        return new WalletDTO(changedWallet);
-      }
-      return new WalletDTO(wallet);
+      const balance = await TatumBlockchainAdapterService.getBalance({
+        network: wallet.network as NetworksList,
+        args: wallet.address,
+      });
+      wallet.nativeBalance = balance;
+      const changedWallet = await wallet.save();
+      return new WalletDTO(changedWallet);
     });
 
     const viewWallets = await Promise.all(viewWalletsPromise);

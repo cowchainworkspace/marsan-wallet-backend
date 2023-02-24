@@ -7,6 +7,7 @@ import { invalidPathMiddleware } from "./middlewares/InvalidPath.middleware";
 import cookieParser from "cookie-parser";
 import { KeyManagementRouter } from "./api/KeyManagement.router";
 import { PriceRouter } from "./api/Price.router";
+import { WalletRouter } from "./api/Wallet.router";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cors({ credentials: true }));
 app.use("/users", UserRouter);
 app.use("/kms", KeyManagementRouter);
 app.use("/price", PriceRouter);
+app.use("/wallet", WalletRouter);
 app.use("*", invalidPathMiddleware);
 app.use(errorMiddleware);
 
