@@ -3,7 +3,7 @@ import {
   GetPriceRequest,
   GetTatumPriceResponse,
 } from "../models/Price/Price.query.models";
-import { TatumUtilsService } from "../services/Tatum/Utils.service";
+import { PriceService } from "../services/Price.service";
 
 class Controller {
   public async getPrice(
@@ -15,7 +15,7 @@ class Controller {
       const { token } = req.params;
       const { pair } = req.query;
 
-      const result = await TatumUtilsService.getPrice(token, pair);
+      const result = await PriceService.getPrice(token, pair);
 
       res.json(result);
     } catch (error) {

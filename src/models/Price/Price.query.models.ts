@@ -3,7 +3,7 @@ import {
   RequestWithParamsAndQuery,
   ResponseWithBody,
 } from "../../types/TypedRequestAndResponse";
-import { GetPriceResponse } from "../Tatum/Tatum.query.models";
+import { IPrice } from "./Price.model";
 
 interface Token {
   token: string;
@@ -13,4 +13,4 @@ interface ChainBody {
 }
 
 export type GetPriceRequest = RequestWithParamsAndQuery<Token, ChainBody>;
-export type GetTatumPriceResponse = ResponseWithBody<GetPriceResponse>;
+export type GetTatumPriceResponse = ResponseWithBody<IPrice>;

@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { KeyManagementRouter } from "./api/KeyManagement.router";
 import { PriceRouter } from "./api/Price.router";
 import { WalletRouter } from "./api/Wallet.router";
+import { PriceWorker } from "./workers/Price.worker";
 
 const app = express();
 
@@ -26,6 +27,7 @@ export const startApp = () => {
   app.listen(mainConfig.app.port, async () => {
     try {
       console.log(`🚀 Server is started at PORT: ${mainConfig.app.port}`);
+      await PriceWorker.start();
     } catch (error) {
       console.error(error);
     }

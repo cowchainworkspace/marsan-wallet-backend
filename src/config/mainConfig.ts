@@ -6,6 +6,7 @@ import { databaseConfig, IDatabaseConfig } from "./dbConfig";
 import { emailConfig, IEmailConfig } from "./emailConfig";
 import { IJwtConfig, jwtConfig } from "./jwtConfig";
 import { IKmsScriptsConfig, kmsScriptsConfig } from "./kmsConfig";
+import { IPriceFetchConfig, priceFetchConfig } from "./priceFetchConfig";
 import { ITatumApiConfig, tatumApiConfig } from "./tatumApiConfig";
 
 config();
@@ -18,6 +19,7 @@ interface MainConfig {
   cookie: ICookieConfig;
   kmsConfig: IKmsScriptsConfig;
   tatumApi: ITatumApiConfig;
+  priceFetch: IPriceFetchConfig;
   isMainnet: boolean;
 }
 
@@ -30,6 +32,7 @@ const configSelector = (): MainConfig => {
     cookie: cookieConfig,
     kmsConfig: kmsScriptsConfig,
     tatumApi: tatumApiConfig,
+    priceFetch: priceFetchConfig,
     isMainnet: false,
   };
 
