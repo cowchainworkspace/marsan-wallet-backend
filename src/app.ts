@@ -9,6 +9,10 @@ import { KeyManagementRouter } from "./api/KeyManagement.router";
 import { PriceRouter } from "./api/Price.router";
 import { WalletRouter } from "./api/Wallet.router";
 import { PriceWorker } from "./workers/Price.worker";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { authMiddlewareWs } from "./middlewares/Auth.middleware";
+import { PriceWs } from "./websockets/Price.ws";
 
 const app = express();
 
@@ -23,8 +27,20 @@ app.use("/wallet", WalletRouter);
 app.use("*", invalidPathMiddleware);
 app.use(errorMiddleware);
 
+const httpServer = createServer(app);
+
+export const io = new Server(httpServer, {
+  cors: { origin: "*" },
+});
+
+// can't use with postman
+io.use(authMiddlewareWs);
+io.on("connection", (socket) => {
+  PriceWs.subscribe(socket);
+});
+
 export const startApp = () => {
-  app.listen(mainConfig.app.port, async () => {
+  httpServer.listen(mainConfig.app.port, async () => {
     try {
       console.log(`🚀 Server is started at PORT: ${mainConfig.app.port}`);
       await PriceWorker.start();

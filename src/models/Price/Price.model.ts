@@ -1,4 +1,6 @@
 import { model, Schema } from "mongoose";
+import { PriceDTO } from "../../dtos/Price.dto";
+import { PriceWs } from "../../websockets/Price.ws";
 
 export interface IPrice {
   token: string;
@@ -32,5 +34,11 @@ const SchemaInstance = new Schema(
     },
   }
 );
+
+SchemaInstance.post("save", async (price, next) => {
+  const priceView = new PriceDTO(price)
+  await PriceWs.handlePriceUpdated(priceView);
+  next();
+});
 
 export const PriceModel = model(PriceModelName, SchemaInstance);

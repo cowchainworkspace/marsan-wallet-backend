@@ -9,7 +9,7 @@ export interface IPriceFetchConfig {
 
 const configSelector = () => {
   const config: IPriceFetchConfig = {
-    delay: MINUTE,
+    delay: MINUTE/4,
     tokens: [CurrenciesList.ETH, CurrenciesList.BTC],
     pairs: [CurrenciesList.CAD, CurrenciesList.USD],
   };
