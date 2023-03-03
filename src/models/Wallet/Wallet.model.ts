@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import { WalletDTO } from "../../dtos/Wallet.dto";
 import { IGeneratedManagedWallet } from "../../types/KmsWalletTypes";
 import { userModelName } from "../User/User.model";
 
@@ -58,7 +59,15 @@ const SchemaInstance = new Schema(
         return await this.find({ user: userId });
       },
       async findByUserAndAddress(userId: string, address: string) {
-        return await this.findOne({ user: userId, address: address.toLowerCase() });
+        return await this.findOne({
+          user: userId,
+          address: address.toLowerCase(),
+        });
+      },
+      async findAllByNetwork(network: string) {
+        const wallets = await this.find({ network: network.toUpperCase() });
+        const viewWallets = wallets.map((wallet) => new WalletDTO(wallet));
+        return viewWallets;
       },
       async updateBalanceByAddress(address: string, balance: string) {
         return await this.findOneAndUpdate(

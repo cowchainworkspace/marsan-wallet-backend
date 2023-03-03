@@ -1,0 +1,14 @@
+export const everySecond = "*/5 * * * * *";
+export const every5Second = "*/5 * * * * *";
+export const every15Second = "*/15 * * * * *";
+export const everyMinute = "* * * * *";
+export const every5minutes = "*/5 * * * *";
+export const every10minutes = "*/10 * * * *";
+export const every30minutes = "*/30 * * * *";
+export const everyHour = "0 * * * *";
+export const every4hour = "0 */4 * * *";
+export const every6hour = "0 */6 * * *";
+export const everyDay = "0 0 * * *";
+export const everyDayAt2AM = "0 2 * * *";
+export const everyWeek = "0 0 * * 0";
+export const everyMonth = "0 0 1 * *";

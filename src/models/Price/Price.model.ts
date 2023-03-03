@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { PriceDTO } from "../../dtos/Price.dto";
 import { PriceWs } from "../../websockets/Price.ws";
 
@@ -9,8 +9,8 @@ export interface IPrice {
   price: string;
   timestamp: number;
 }
-
-const PriceModelName = "Price";
+export type IPriceDb = IPrice & { _id: Types.ObjectId };
+export const PriceModelName = "Price";
 const SchemaInstance = new Schema(
   {
     token: { type: String, required: true },
@@ -36,7 +36,7 @@ const SchemaInstance = new Schema(
 );
 
 SchemaInstance.post("save", async (price, next) => {
-  const priceView = new PriceDTO(price)
+  const priceView = new PriceDTO(price);
   await PriceWs.handlePriceUpdated(priceView);
   next();
 });

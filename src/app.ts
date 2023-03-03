@@ -13,6 +13,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { authMiddlewareWs } from "./middlewares/Auth.middleware";
 import { PriceWs } from "./websockets/Price.ws";
+import { SnapshotWorker } from "./workers/Snapshot.worker";
 
 const app = express();
 
@@ -43,7 +44,8 @@ export const startApp = () => {
   httpServer.listen(mainConfig.app.port, async () => {
     try {
       console.log(`🚀 Server is started at PORT: ${mainConfig.app.port}`);
-      await PriceWorker.start();
+      PriceWorker.start();
+      SnapshotWorker.start()
     } catch (error) {
       console.error(error);
     }

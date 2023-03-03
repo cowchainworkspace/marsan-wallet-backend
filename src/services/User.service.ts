@@ -14,6 +14,9 @@ import { WalletDTO } from "../dtos/Wallet.dto";
 import { NetworksList } from "../types/enums/NetworksList";
 import { TatumEthService } from "./Tatum/Blockchain/Eth.service";
 import { TatumBlockchainAdapterService } from "./Tatum/Blockchain/Adapter.service";
+import { PriceService } from "./Price.service";
+import { CurrenciesList } from "../types/enums/currenciesList";
+import { SnapshotService } from "./Snapshot.service";
 
 class Service {
   public async register(email: string, password: string) {
@@ -108,22 +111,40 @@ class Service {
     return viewUsers;
   }
 
-  private async _generateReturn(user: IDbUser): Promise<UserResponseBody> {
+  public async getUserInfo(user: IDbUser) {
     const viewUser = new UserDTO(user);
-    const tokens = TokenService.generateTokens(viewUser);
 
     const wallets = await WalletModel.findByUser(user._id.toString());
+
     const viewWalletsPromise = wallets.map(async (wallet) => {
       const balance = await TatumBlockchainAdapterService.getBalance({
         network: wallet.network as NetworksList,
         args: wallet.address,
       });
+      const priceCad = await PriceService.getPrice(
+        wallet.network,
+        CurrenciesList.CAD
+      );
+      const priceUsd = await PriceService.getPrice(
+        wallet.network,
+        CurrenciesList.USD
+      );
+
       wallet.nativeBalance = balance;
       const changedWallet = await wallet.save();
-      return new WalletDTO(changedWallet);
+      const snapshots = await SnapshotService.getAllForWallet(wallet._id.toString())
+      return { ...new WalletDTO(changedWallet), prices: [priceCad, priceUsd], snapshots };
     });
 
     const viewWallets = await Promise.all(viewWalletsPromise);
+    return { user: viewUser, wallets: viewWallets };
+  }
+
+  private async _generateReturn(user: IDbUser): Promise<UserResponseBody> {
+    const { user: viewUser, wallets: viewWallets } = await this.getUserInfo(
+      user
+    );
+    const tokens = TokenService.generateTokens(viewUser);
 
     await TokenService.saveToken(viewUser.id, tokens.refreshToken);
 
